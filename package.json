@@ -1,0 +1,23 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "This is an Amazon-like storefront built with NodeJS &amp; MySQL. The app will take in orders from customers and deplete stock from the store's inventory. The App also tracks product sales across store's departments and then provide a summary of the highest-grossing departments in the store.",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanishj/bamazon.git"
+  },
+  "author": "Sanish John",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sanishj/bamazon/issues"
+  },
+  "homepage": "https://github.com/sanishj/bamazon#readme",
+  "dependencies": {
+    "inquirer": "^3.2.1",
+    "mysql": "^2.14.0"
+  }
+}
