@@ -10,6 +10,8 @@ CREATE TABLE bamazonDB.products
      stock_quantity     INTEGER(10),
      PRIMARY KEY (item_id) 
   ); 
+  
+ALTER TABLE `bamazonDB.products` AUTO_INCREMENT = 1001;
 
   SELECT * FROM bamazonDB.products;
 
