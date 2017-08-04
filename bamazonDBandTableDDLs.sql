@@ -2,7 +2,7 @@ CREATE DATABASE bamazonDB;
 
 CREATE TABLE bamazonDB.products 
   ( 
-     item_id            INTEGER(11) AUTO_INCREMENT=1001 NOT NULL, 
+     item_id            INTEGER(11) AUTO_INCREMENT NOT NULL, 
      product_name       VARCHAR(256),
      department_id      INTEGER(11),
      department_names   VARCHAR(256), 
