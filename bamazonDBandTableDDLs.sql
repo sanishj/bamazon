@@ -11,7 +11,7 @@ CREATE TABLE bamazonDB.products
      PRIMARY KEY (item_id) 
   ); 
   
-ALTER TABLE `bamazonDB.products` AUTO_INCREMENT = 1001;
+ALTER TABLE bamazonDB.products AUTO_INCREMENT = 1001;
 
   SELECT * FROM bamazonDB.products;
 
@@ -21,8 +21,8 @@ ALTER TABLE `bamazonDB.products` AUTO_INCREMENT = 1001;
      department_names   VARCHAR(256), 
      over_head_costs    DECIMAL(10,2), 
      product_sales      DECIMAL(10,2),
-     total_profit       DECIMAL(10,2)
-     PRIMARY KEY (item_id) 
+     total_profit       DECIMAL(10,2),
+     PRIMARY KEY (department_id ) 
   ); 
 
   SELECT * FROM bamazonDB.departments;
