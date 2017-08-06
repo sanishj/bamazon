@@ -15,37 +15,50 @@ var itemIdPrdData = [];
 
 // constructor function used to create programmers objects
 function Selection(item_id, numberItem) {
-  this.item_id = item_id;
-  this.numberItem = numberItem;
+    this.item_id = item_id;
+    this.numberItem = numberItem;
 }
 
-//Display stock by All item_id, product_name price, stock_quantity
-connection.query('SELECT * FROM bamazonDB.products;', function(err, res) {
-	for (var i = 0; i < res.length; i++) {
-            itemIdPrdData.push(res[i].item_id + " | " + res[i].product_name);
-        }
-        console.log(itemIdPrdData);
-        console.log("-----------------------------------");
-        prompt();
-        connection.end(); // This ends the connection. it is a delivered function from mysql creator
-    });
+// creates the printInfo method and applies it to all programmer objects
+Selection.prototype.printInfo = function () {
+    console.log("Product Chosen: " + this.option + "\nQuantity Needed: " + this.numberItem);
+};
 
-prompt = function() {
+//Display stock by All item_id, product_name price, stock_quantity
+connection.query('SELECT * FROM bamazonDB.products;', function (err, res) {
+    for (var i = 0; i < res.length; i++) {
+        itemIdPrdData.push(res[i].item_id + " | " + res[i].product_name);
+    }
+    console.log(itemIdPrdData);
+    console.log("-----------------------------------");
+    prompt();
+    connection.end(); // This ends the connection. it is a delivered function from mysql creator
+});
+
+prompt = function () {
     inquirer.prompt([{
         type: 'list',
         name: 'option',
         message: color.green_bg('\nWhat product would you like to buy?\n'),
         choices: itemIdPrdData
-    }, 
+    },
     {
-    type: 'input',
-    name: 'numberItem',
-    message: 'How many do you want to purchase?'
-  }]).then(function(choice) {
-      var newGuy = new Programmer(choice.option, choice.numberItem);
-        console.log(newGuy);
+        type: 'input',
+        name: 'numberItem',
+        message: 'How many do you want to purchase?'
+    }]).then(function (choice) {
+        var choices = new Selection(choice.option, choice.numberItem);
+        console.log(choices);
+        console.log(choice.option.substring(0, 5));
+
+        connection.query(`SELECT * FROM bamazonDB.products where item_id = 1001;`, function (err, res) {
+            console.log(res);
+            console.log("-----------------------------------");
+            connection.end(); // This ends the connection. it is a delivered function from mysql creator
+        });
     })
 }
+
 
 /*
 The app should then prompt users with two messages.
