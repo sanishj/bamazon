@@ -13,61 +13,54 @@ var connection = mysql.createConnection({
 
 var itemIdPrdData = [];
 
-// constructor function used to create Selection objects
-function Selection(item_id, numberItem) {
-    this.item_id = item_id;
-    this.numberItem = numberItem;
-}
-
-connection.query('SELECT * FROM bamazonDB.products;', function (err, res) {
-    console.log(res);
-    console.log("-----------------------------------");
-    connection.end(); // This ends the connection. it is a delivered function from mysql creator
-});
-
-// creates the printInfo method and applies it to all Selection objects
-Selection.prototype.printInfo = function () {
-    console.log("Product Chosen: " + this.option + "\nQuantity Needed: " + this.numberItem);
-};
-
-//Display stock by All item_id, product_name price, stock_quantity
-connection.query('SELECT * FROM bamazonDB.products;', function (err, res) {
+//Display stock by All item_id, product_name price
+connection.query(`SELECT * FROM bamazonDB.products;`, function (err, res) {
     for (var i = 0; i < res.length; i++) {
-        itemIdPrdData.push(res[i].item_id + " | " + res[i].product_name);
+        itemIdPrdData.push(res[i].item_id + ` | ` + res[i].product_name + ` | $` + res[i].price);
     }
-    console.log(itemIdPrdData);
-    console.log("-----------------------------------");
-    prompt();
-    connection.end(); // This ends the connection. it is a delivered function from mysql creator
+    OrderPrompt();
+    // connection.end(); // This ends the connection. it is a delivered function from mysql creator
 });
 
-prompt = function () {
+var OrderPrompt = function () {
     inquirer.prompt([{
-        type: 'list',
-        name: 'option',
-        message: color.green_bg('\nWhat product would you like to buy?\n'),
-        choices: itemIdPrdData
+        type: `list`,
+        name: `option`,
+        message: color.green_bg(`\nWhat product would you like to buy?\n`),
+        choices: itemIdPrdData //quering the DB to get item_id, name and price
     },
     {
-        type: 'input',
-        name: 'numberItem',
+        type: `input`,
+        name: `qty_requested`,
         message: 'How many do you want to purchase?'
     }]).then(function (choice) {
-        var choices = new Selection(choice.option, choice.numberItem);
-        console.log(choices);
-        console.log(choice.option.substring(0, 5));
+        var query = `SELECT * FROM bamazonDB.products where ?`;
+        var userSelected = choice.option.substring(0, 5) //substring so that we can pick up only the id from res
+        connection.query(query,
+            { item_id: userSelected }, function (err, res) {
+                if (err) throw err;
+                if (choice.qty_requested > res[0].stock_quantity) {
+                    console.log(color.red_bg(`Insufficient quantity. We don't have that much stock`));
+                } else {
+                    console.log(color.green_bg(`Your order is being processed.`));
+                    order(userSelected, choice.qty_requested, res[0].stock_quantity);
+                }
+            })
     })
 }
 
-
-/*
-The app should then prompt users with two messages.
-The first should ask them the ID of the product they would like to buy.
-The second message should ask how many units of the product they would like to buy.
-Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
-If not, the app should log a phrase like Insufficient quantity!, and then prevent the order from going through.
-However, if your store does have enough of the product, you should fulfill the customer's order.
-This means updating the SQL database to reflect the remaining quantity.
-Once the update goes through, show the customer the total cost of their purchase.*/
-
-//executing code
+order = function (item_id, qty_requested, stock_quantity) {
+    var processOrder = `UPDATE bamazonDB.products SET ? WHERE ?`;
+    connection.query(processOrder, [{
+        stock_quantity: stock_quantity - qty_requested
+    }, { item_id: item_id }
+    ], function (err, res) {
+        if (err) throw err;
+        connection.query(`SELECT * FROM bamazonDB.products WHERE ?`,
+            { item_id: item_id }, function (err, res) {
+                if (err) throw err;
+                console.log(color.green_bg(`Your order has been processed.\nTotal Cost = $` + res[0].price * qty_requested));
+            });
+        connection.end(); // This ends the connection. it is a delivered function from mysql creator
+    });
+};
