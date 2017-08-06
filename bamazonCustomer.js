@@ -7,19 +7,25 @@ var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root", //Your username
-    password: "007intel", //Supply your password here
+    password: "", //Supply your password here
     database: "bamazonDB"
 })
 
 var itemIdPrdData = [];
 
-// constructor function used to create programmers objects
+// constructor function used to create Selection objects
 function Selection(item_id, numberItem) {
     this.item_id = item_id;
     this.numberItem = numberItem;
 }
 
-// creates the printInfo method and applies it to all programmer objects
+connection.query('SELECT * FROM bamazonDB.products;', function (err, res) {
+    console.log(res);
+    console.log("-----------------------------------");
+    connection.end(); // This ends the connection. it is a delivered function from mysql creator
+});
+
+// creates the printInfo method and applies it to all Selection objects
 Selection.prototype.printInfo = function () {
     console.log("Product Chosen: " + this.option + "\nQuantity Needed: " + this.numberItem);
 };
@@ -50,12 +56,6 @@ prompt = function () {
         var choices = new Selection(choice.option, choice.numberItem);
         console.log(choices);
         console.log(choice.option.substring(0, 5));
-
-        connection.query(`SELECT * FROM bamazonDB.products where item_id = 1001;`, function (err, res) {
-            console.log(res);
-            console.log("-----------------------------------");
-            connection.end(); // This ends the connection. it is a delivered function from mysql creator
-        });
     })
 }
 
